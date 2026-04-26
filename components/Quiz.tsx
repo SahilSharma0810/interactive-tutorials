@@ -21,7 +21,7 @@ export default function Quiz({ questions }: Props) {
     () => questions.map(() => null)
   );
 
-  const score = answers.reduce(
+  const score = answers.reduce<number>(
     (acc, ans, i) => acc + (ans === questions[i].correct ? 1 : 0),
     0
   );
