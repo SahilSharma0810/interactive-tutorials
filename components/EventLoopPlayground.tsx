@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import EventLoopWalkthrough from "./EventLoopWalkthrough";
 import { runUserCode } from "@/lib/tutorials/javascript-event-loop/instrumenter";
 import type { Step } from "@/lib/tutorials/javascript-event-loop/simulator";
@@ -30,16 +30,27 @@ console.log("d");`,
   },
 ];
 
-export default function EventLoopPlayground() {
+type Props = {
+  /** Called the first time the user successfully runs code. */
+  onFirstRun?: () => void;
+};
+
+export default function EventLoopPlayground({ onFirstRun }: Props = {}) {
   const [code, setCode] = useState<string>(PRESETS[0].code);
   const [steps, setSteps] = useState<Step[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const firedFirstRunRef = useRef(false);
 
   const onRun = () => {
     const result = runUserCode(code);
     if (result.ok) {
       setSteps(result.steps);
       setError(null);
+      if (!firedFirstRunRef.current) {
+        firedFirstRunRef.current = true;
+        onFirstRun?.();
+      }
     } else {
       setSteps(null);
       setError(result.error);

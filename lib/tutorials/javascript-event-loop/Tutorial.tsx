@@ -427,7 +427,11 @@ console.log("end");`}
             subset of async APIs — supported features are listed below.
           </p>
           <div style={{ marginTop: 32 }}>
-            <EventLoopPlayground />
+            <EventLoopPlayground onFirstRun={() => {
+              if (typeof window !== "undefined") {
+                import("@/lib/progress").then(m => m.markCompleted(meta.slug, "playground"));
+              }
+            }} />
           </div>
         </section>
 
