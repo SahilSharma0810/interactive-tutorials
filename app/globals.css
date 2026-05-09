@@ -1699,3 +1699,10 @@ footer {
   .tutorial-shell-main main .section { max-width: 920px; }
   .tutorial-shell-main main .section.hero { max-width: 920px; }
 }
+
+/* ============================================================
+   Top nav anchors yield to RailToc at desktop  (Task 8 fix)
+   ============================================================ */
+@media (min-width: 1100px) {
+  .topnav ul { display: none; }
+}
