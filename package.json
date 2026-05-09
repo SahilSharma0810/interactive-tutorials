@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:el": "npx tsx lib/tutorials/javascript-event-loop/__tests__/run.ts"
+    "test:el": "npx tsx lib/tutorials/javascript-event-loop/__tests__/run.ts",
+    "test:progress": "tsx lib/__tests__/progress.test.ts"
   },
   "dependencies": {
     "next": "14.2.5",
