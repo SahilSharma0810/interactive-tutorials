@@ -1508,4 +1508,63 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .reading-progress { transition: none; }
 }
+
+/* ============================================================
+   Rail TOC  (Task 5)
+   ============================================================ */
+.rail-toc {
+  position: sticky;
+  top: 64px;          /* topnav 44 + progress 2 + 18 breathing */
+  width: 240px;
+  font-family: var(--body);
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  color: var(--ink-48);
+  align-self: start;  /* prevent stretch in grid parent */
+}
+.rail-toc-label {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-48);
+  margin-bottom: 12px;
+  padding-left: 12px;
+}
+.rail-toc-list { list-style: none; padding: 0; margin: 0; }
+.rail-toc-item {
+  border-left: 3px solid transparent;
+}
+.rail-toc-item.is-active { border-left-color: var(--accent); }
+.rail-toc-item a {
+  display: grid;
+  grid-template-columns: 24px 1fr 14px;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: color .15s, background-color .15s;
+}
+.rail-toc-item a:hover { color: var(--ink); background: var(--bg-2); }
+.rail-toc-item.is-active a { color: var(--accent); font-weight: 600; }
+.rail-toc-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-48);
+}
+.rail-toc-text { line-height: 1.3; }
+.rail-toc-glyph {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-48);
+  background: transparent;
+  justify-self: end;
+}
+.rail-toc-item.is-visited .rail-toc-glyph { border-color: var(--ink-48); background: transparent; }
+.rail-toc-item.is-completed .rail-toc-glyph { background: var(--accent); border-color: var(--accent); }
+@media (max-width: 1099px) { .rail-toc { display: none; } }
+@media print { .rail-toc { display: none; } }
 @media print { .reading-progress { display: none; } }
