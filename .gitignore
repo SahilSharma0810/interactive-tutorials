@@ -32,3 +32,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local agent tooling & brainstorm session artifacts
+.superpowers/
+.agents/
+.claude/
+docs/superpowers/
+skills-lock.json
+_*.sh
+_*.ts
