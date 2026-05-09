@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, ReactNode } from "react";
+import { createRoot, type Root } from "react-dom/client";
 import Nav from "@/components/Nav";
 import RailToc from "@/components/RailToc";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import MobileChapterMenu from "@/components/MobileChapterMenu";
+import NextChapterCTA from "@/components/NextChapterCTA";
 import { useProgress } from "@/lib/progress";
 import type { TutorialMeta } from "@/lib/tutorials/types";
 
@@ -66,6 +68,43 @@ export default function TutorialShell({ meta, children }: Props) {
 
   // Click handler from rail/mobile that updates active immediately (avoid 1-frame flicker)
   const handleJump = (id: string) => setActiveId(id);
+
+  // Inject NextChapterCTA at the end of each section[data-chapter-id]
+  useEffect(() => {
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section[data-chapter-id]")
+    );
+    const roots: Root[] = [];
+    sections.forEach((section, i) => {
+      // Avoid double-injecting on hot reload
+      const existing = section.querySelector(":scope > .next-chapter-mount");
+      let mount: HTMLElement;
+      if (existing) {
+        mount = existing as HTMLElement;
+      } else {
+        mount = document.createElement("div");
+        mount.className = "next-chapter-mount";
+        section.appendChild(mount);
+      }
+      const next = meta.chapters[i + 1];
+      const root = createRoot(mount);
+      roots.push(root);
+      if (next) {
+        root.render(
+          <NextChapterCTA nextLabel={next.title ?? next.label} nextHref={"#" + next.id} />
+        );
+      } else {
+        root.render(
+          <div className="next-chapter-cta">
+            <a href="#main">Back to top <span aria-hidden>↑</span></a>
+          </div>
+        );
+      }
+    });
+    return () => {
+      roots.forEach((r) => r.unmount());
+    };
+  }, [meta.chapters]);
 
   // Heading anchor link click → copy URL with hash
   useEffect(() => {

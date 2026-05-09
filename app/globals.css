@@ -1782,3 +1782,22 @@ footer {
   outline: 2px solid rgba(0, 102, 204, 0.18);
   outline-offset: 2px;
 }
+
+/* ============================================================
+   Next chapter CTA  (Task 14)
+   ============================================================ */
+.next-chapter-cta {
+  margin-top: 56px;
+  text-align: right;
+  border-top: 1px solid var(--hairline);
+  padding-top: 24px;
+}
+.next-chapter-cta a {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.005em;
+}
+.next-chapter-cta a:hover { text-decoration: underline; }
