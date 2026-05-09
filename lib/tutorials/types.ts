@@ -9,6 +9,8 @@ export type TutorialMeta = {
   duration: string;
   /** Tags shown on the card */
   topics: string[];
+  /** Group heading on the home page TOC */
+  category: string;
   /** Order of appearance in the home page (lower = first) */
   order?: number;
 };

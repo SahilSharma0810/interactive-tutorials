@@ -1,6 +1,8 @@
 import type { Tutorial } from "./types";
 import { meta as priorityQueuesMeta } from "./priority-queues/meta";
 import PriorityQueuesTutorial from "./priority-queues/Tutorial";
+import { meta as eventLoopMeta } from "./javascript-event-loop/meta";
+import EventLoopTutorial from "./javascript-event-loop/Tutorial";
 
 // =============================================================
 // REGISTRY OF TUTORIALS
@@ -18,9 +20,12 @@ export const tutorials: Tutorial[] = [
     ...priorityQueuesMeta,
     Component: PriorityQueuesTutorial,
   },
+  {
+    ...eventLoopMeta,
+    Component: EventLoopTutorial,
+  },
 ];
 
-// Sort by `order`, falling back to insertion order
 tutorials.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 
 export function getTutorial(slug: string): Tutorial | undefined {

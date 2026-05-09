@@ -1,10 +1,23 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import { tutorials } from "@/lib/tutorials/registry";
+import type { Tutorial } from "@/lib/tutorials/types";
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
+function groupByCategory(items: Tutorial[]): { category: string; items: Tutorial[] }[] {
+  const groups = new Map<string, Tutorial[]>();
+  for (const t of items) {
+    const list = groups.get(t.category) ?? [];
+    list.push(t);
+    groups.set(t.category, list);
+  }
+  return Array.from(groups, ([category, items]) => ({ category, items }));
+}
+
 export default function Home() {
+  const grouped = groupByCategory(tutorials);
+  let pageIndex = 0;
   return (
     <>
       <Nav />
@@ -62,94 +75,49 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <ol className="toc-list" role="list">
-              {tutorials.map((t, i) => (
-                <li key={t.slug} className="toc-item" style={{ ['--i' as never]: i }}>
-                  <Link href={`/tutorials/${t.slug}`} className="toc-link">
-                    <span className="toc-numeral" aria-hidden>
-                      {ROMAN[i] ?? String(i + 1)}.
-                    </span>
-                    <span className="toc-body">
-                      <span className="toc-title-row">
-                        <h3 className="toc-title">{t.title}</h3>
-                        <span className="toc-leader" aria-hidden />
-                        <span className="toc-page">
-                          p.&nbsp;{String((i + 1) * 7).padStart(3, "0")}
-                        </span>
-                      </span>
-                      <p className="toc-desc">{t.description}</p>
-                      <span className="toc-meta">
-                        <span className="toc-meta-pill duration">{t.duration}</span>
-                        {t.topics.map((topic) => (
-                          <span key={topic} className="toc-meta-pill">
-                            {topic}
+            grouped.map(({ category, items }) => (
+              <div key={category} className="toc-category">
+                <h3 className="toc-category-heading">{category}</h3>
+                <ol className="toc-list" role="list">
+                  {items.map((t) => {
+                    const i = pageIndex++;
+                    return (
+                      <li key={t.slug} className="toc-item" style={{ ['--i' as never]: i }}>
+                        <Link href={`/tutorials/${t.slug}`} className="toc-link">
+                          <span className="toc-numeral" aria-hidden>
+                            {ROMAN[i] ?? String(i + 1)}.
                           </span>
-                        ))}
-                        <span className="toc-cta">
-                          Begin reading <span aria-hidden>→</span>
-                        </span>
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
+                          <span className="toc-body">
+                            <span className="toc-title-row">
+                              <h3 className="toc-title">{t.title}</h3>
+                              <span className="toc-leader" aria-hidden />
+                              <span className="toc-page">
+                                p.&nbsp;{String((i + 1) * 7).padStart(3, "0")}
+                              </span>
+                            </span>
+                            <p className="toc-desc">{t.description}</p>
+                            <span className="toc-meta">
+                              <span className="toc-meta-pill duration">{t.duration}</span>
+                              {t.topics.map((topic) => (
+                                <span key={topic} className="toc-meta-pill">
+                                  {topic}
+                                </span>
+                              ))}
+                              <span className="toc-cta">
+                                Begin reading <span aria-hidden>→</span>
+                              </span>
+                            </span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ))
           )}
         </section>
 
-        <Asterism />
-
-        {/* ============ COLOPHON / BUILD YOUR OWN ============ */}
-        <section className="section colophon">
-          <div className="colophon-grid">
-            <aside className="colophon-aside" aria-hidden>
-              <div className="colophon-mark">¶</div>
-              <div className="colophon-aside-label">Colophon</div>
-            </aside>
-            <div className="colophon-body">
-              <div className="eyebrow">Adding more</div>
-              <h2>
-                Build your own <em>lesson.</em>
-              </h2>
-              <p className="lede">
-                Each tutorial is a single React component plus a metadata file.
-                The shared visualization library — heap diagrams, step
-                controllers, quizzes — is yours to compose.
-              </p>
-
-              <ol className="feature-row" role="list">
-                <li className="feature">
-                  <div className="feature-numeral">i.</div>
-                  <h4>Author</h4>
-                  <p>
-                    Create{" "}
-                    <code className="inline">
-                      lib/tutorials/&lt;slug&gt;/Tutorial.tsx
-                    </code>{" "}
-                    as a React component.
-                  </p>
-                </li>
-                <li className="feature">
-                  <div className="feature-numeral">ii.</div>
-                  <h4>Describe</h4>
-                  <p>
-                    Add a <code className="inline">meta.ts</code> with title,
-                    description, duration, and topics.
-                  </p>
-                </li>
-                <li className="feature">
-                  <div className="feature-numeral">iii.</div>
-                  <h4>Register</h4>
-                  <p>
-                    Import both into{" "}
-                    <code className="inline">lib/tutorials/registry.ts</code>{" "}
-                    and you&rsquo;re done.
-                  </p>
-                </li>
-              </ol>
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer>
