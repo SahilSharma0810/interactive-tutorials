@@ -2,6 +2,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import { tutorials } from "@/lib/tutorials/registry";
 import type { Tutorial } from "@/lib/tutorials/types";
+import DifficultyPill from "@/components/DifficultyPill";
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
@@ -53,6 +54,25 @@ export default function Home() {
 
         <Asterism />
 
+        {(() => {
+          const recommended = tutorials.find((t) => t.recommendedFirst);
+          if (!recommended) return null;
+          return (
+            <section className="section start-here">
+              <div className="eyebrow">Start here</div>
+              <Link href={`/tutorials/${recommended.slug}`} className="card start-here-card">
+                <div>
+                  <h3>{recommended.title}</h3>
+                  <p>{recommended.description}</p>
+                </div>
+                <div className="start-here-cta">
+                  Begin reading <span aria-hidden>→</span>
+                </div>
+              </Link>
+            </section>
+          );
+        })()}
+
         {/* ============ TABLE OF CONTENTS ============ */}
         <section className="section toc-section">
           <div className="section-header">
@@ -96,8 +116,24 @@ export default function Home() {
                               </span>
                             </span>
                             <p className="toc-desc">{t.description}</p>
+                            {t.prerequisites && t.prerequisites.length > 0 && (
+                              <p className="toc-prereq">
+                                Reads after:{" "}
+                                {t.prerequisites.map((slug, i) => {
+                                  const prev = tutorials.find((x) => x.slug === slug);
+                                  if (!prev) return null;
+                                  return (
+                                    <span key={slug}>
+                                      {i > 0 && ", "}
+                                      <Link href={`/tutorials/${prev.slug}`}>{prev.title}</Link>
+                                    </span>
+                                  );
+                                })}
+                              </p>
+                            )}
                             <span className="toc-meta">
                               <span className="toc-meta-pill duration">{t.duration}</span>
+                              <DifficultyPill level={t.difficulty} />
                               {t.topics.map((topic) => (
                                 <span key={topic} className="toc-meta-pill">
                                   {topic}

@@ -1822,3 +1822,39 @@ section[data-chapter-id] > h2 > .heading-anchor:focus {
   opacity: 1;
   color: var(--accent);
 }
+
+/* ============================================================
+   Home: Start here + prerequisite line  (Task 17)
+   ============================================================ */
+.section.start-here { padding-top: 0; padding-bottom: 0; margin-bottom: 28px; }
+.start-here-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  text-decoration: none;
+  color: inherit;
+}
+.start-here-card h3 {
+  font-family: var(--display);
+  font-size: 26px;
+  margin: 6px 0 6px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+.start-here-card p { margin: 0; color: var(--ink-80); font-size: 16px; }
+.start-here-cta {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.toc-prereq {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink-48);
+  margin: -8px 0 14px;
+}
+.toc-prereq a { color: var(--accent); text-decoration: none; }
+.toc-prereq a:hover { text-decoration: underline; }
