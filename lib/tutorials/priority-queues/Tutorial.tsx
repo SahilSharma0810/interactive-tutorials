@@ -548,7 +548,7 @@ export default function PriorityQueuesTutorial() {
 
         {/* PLAYGROUND */}
         <section className="section" id="playground" data-chapter-id="playground">
-          <div className="eyebrow">Chapter 6 · Free play</div>
+          <div className="eyebrow">Chapter 7 · Free play</div>
           <h2>
             The Heap <em>Sandbox.</em>
           </h2>
@@ -562,8 +562,8 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* TIME COMPLEXITY */}
-        <section className="section">
-          <div className="eyebrow">Chapter 7 · The bottom line</div>
+        <section className="section" id="time-complexity" data-chapter-id="time-complexity">
+          <div className="eyebrow">Chapter 6 · The bottom line</div>
           <h2>
             Time <em>complexity.</em>
           </h2>

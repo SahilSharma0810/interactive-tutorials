@@ -1920,3 +1920,10 @@ section[data-chapter-id] > h2 > .heading-anchor:focus {
   letter-spacing: -0.005em;
 }
 .reset-progress-link:hover { color: var(--accent); }
+
+/* ============================================================
+   Hash-jump offset for fixed top-nav  (final-review fix)
+   ============================================================ */
+section[data-chapter-id] {
+  scroll-margin-top: 64px;
+}
