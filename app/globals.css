@@ -1946,3 +1946,10 @@ section[data-chapter-id] {
   letter-spacing: -0.012em;
   color: #ffffff;
 }
+
+/* ============================================================
+   Tighten the cover top so it sits closer to the sticky nav
+   (the original 96px felt too airy under a dark topnav).
+   ============================================================ */
+.section.cover { padding-top: 40px; }
+.cover-rule { margin-bottom: 32px; }
