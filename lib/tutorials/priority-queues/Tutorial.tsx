@@ -646,7 +646,7 @@ export default function PriorityQueuesTutorial() {
             what stuck.
           </p>
           <div style={{ marginTop: 36 }}>
-            <Quiz questions={QUIZ_QUESTIONS} />
+            <Quiz questions={QUIZ_QUESTIONS} tutorialSlug={meta.slug} chapterId="quiz" />
           </div>
         </section>
       </main>

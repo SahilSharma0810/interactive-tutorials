@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useProgress, type QuizAttempt } from "@/lib/progress";
 
 export type QuizQuestion = {
   q: string;
@@ -11,35 +12,82 @@ export type QuizQuestion = {
 
 type Props = {
   questions: QuizQuestion[];
+  /** Required for persistence; if absent, the quiz works in-memory only. */
+  tutorialSlug?: string;
+  /** Required for persistence; identifies the chapter that owns this quiz. */
+  chapterId?: string;
 };
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
 
-export default function Quiz({ questions }: Props) {
-  // Per-question selected answer (or null if unanswered)
-  const [answers, setAnswers] = useState<(number | null)[]>(
-    () => questions.map(() => null)
-  );
+type PerQuestionState = {
+  attempts: { selectedIdx: number; correct: boolean }[];
+  locked: boolean;       // true once a correct answer is selected
+};
 
-  const score = answers.reduce<number>(
-    (acc, ans, i) => acc + (ans === questions[i].correct ? 1 : 0),
-    0
-  );
-  const allAnswered = answers.every((a) => a !== null);
+function emptyState(n: number): PerQuestionState[] {
+  return Array.from({ length: n }, () => ({ attempts: [], locked: false }));
+}
+
+export default function Quiz({ questions, tutorialSlug, chapterId }: Props) {
+  const [state, setState] = useState<PerQuestionState[]>(() => emptyState(questions.length));
+  const { progress, recordQuizAttempt, markCompleted } = useProgress(tutorialSlug ?? "");
+
+  // Restore from persistence on mount
+  useEffect(() => {
+    if (!tutorialSlug || !progress) return;
+    const restored = emptyState(questions.length);
+    for (const a of progress.quizAttempts) {
+      if (a.questionIdx < 0 || a.questionIdx >= questions.length) continue;
+      const ps = restored[a.questionIdx];
+      ps.attempts.push({ selectedIdx: a.selectedIdx, correct: a.correct });
+      if (a.correct) ps.locked = true;
+    }
+    setState(restored);
+  }, [tutorialSlug, progress, questions.length]);
 
   const select = (qIdx: number, oIdx: number) => {
-    if (answers[qIdx] != null) return; // already answered
-    setAnswers((prev) => {
+    setState((prev) => {
+      const ps = prev[qIdx];
+      if (ps.locked) return prev;
+      // Skip duplicate clicks on an option already tried for this question
+      if (ps.attempts.some((a) => a.selectedIdx === oIdx)) return prev;
+      const correct = oIdx === questions[qIdx].correct;
+      const nextPs: PerQuestionState = {
+        attempts: [...ps.attempts, { selectedIdx: oIdx, correct }],
+        locked: correct ? true : ps.locked,
+      };
       const next = [...prev];
-      next[qIdx] = oIdx;
+      next[qIdx] = nextPs;
       return next;
     });
+
+    if (tutorialSlug) {
+      const attemptNum = (state[qIdx]?.attempts.length ?? 0) + 1;
+      const correct = oIdx === questions[qIdx].correct;
+      const att: QuizAttempt = {
+        questionIdx: qIdx,
+        selectedIdx: oIdx,
+        correct,
+        attempt: attemptNum,
+        ts: Date.now(),
+      };
+      recordQuizAttempt(att);
+      if (correct && chapterId) markCompleted(chapterId);
+    }
   };
 
-  const reset = () => setAnswers(questions.map(() => null));
+  const reset = () => setState(emptyState(questions.length));
+
+  // Running scores
+  const firstTryCorrect = state.reduce((acc, ps) => {
+    return acc + (ps.attempts[0]?.correct ? 1 : 0);
+  }, 0);
+  const eventuallyCorrect = state.filter((ps) => ps.locked).length;
+  const allLocked = state.every((ps) => ps.locked);
 
   let scoreMessage = "";
-  const pct = score / questions.length;
+  const pct = firstTryCorrect / questions.length;
   if (pct === 1) scoreMessage = "Perfect — you've got the whole picture.";
   else if (pct >= 0.7) scoreMessage = "Strong understanding. Review the misses and you're set.";
   else if (pct >= 0.4) scoreMessage = "A solid start. Re-skim the operation walkthroughs.";
@@ -47,8 +95,20 @@ export default function Quiz({ questions }: Props) {
 
   return (
     <div>
+      <div className="quiz-running-score" role="status" aria-live="polite">
+        <span className="quiz-running-score-label">Progress</span>
+        <span className="quiz-running-score-value">
+          {eventuallyCorrect} / {questions.length} answered · {firstTryCorrect} first-try correct
+        </span>
+      </div>
+
       {questions.map((q, qi) => {
-        const ans = answers[qi];
+        const ps = state[qi];
+        const triedIdxs = new Set(ps.attempts.map((a) => a.selectedIdx));
+        const showCorrect = ps.attempts.length > 0 && !ps.locked
+          ? true   // immediately reveal correct after first wrong attempt
+          : ps.locked;
+
         return (
           <div className="quiz-q" key={qi}>
             <h4>
@@ -58,16 +118,20 @@ export default function Quiz({ questions }: Props) {
             <div className="quiz-options">
               {q.options.map((opt, oi) => {
                 let cls = "quiz-opt";
-                if (ans != null) cls += " disabled";
-                if (ans != null) {
+                if (triedIdxs.has(oi)) {
                   if (oi === q.correct) cls += " correct";
-                  else if (oi === ans) cls += " wrong";
+                  else cls += " wrong";
                 }
+                if (showCorrect && oi === q.correct && !triedIdxs.has(oi)) {
+                  cls += " kcr-reveal";
+                }
+                if (ps.locked) cls += " disabled";
                 return (
                   <button
                     key={oi}
                     className={cls}
                     onClick={() => select(qi, oi)}
+                    aria-pressed={triedIdxs.has(oi) ? "true" : undefined}
                   >
                     <span className="marker">{LETTERS[oi]}</span>
                     <span dangerouslySetInnerHTML={{ __html: opt }} />
@@ -80,15 +144,17 @@ export default function Quiz({ questions }: Props) {
               role="status"
               aria-live="polite"
               aria-atomic="true"
-              hidden={ans == null}
-              style={ans == null ? { display: "none" } : undefined}
+              hidden={ps.attempts.length === 0}
+              style={ps.attempts.length === 0 ? { display: "none" } : undefined}
             >
-              {ans != null && (
+              {ps.attempts.length > 0 && (
                 <>
-                  {ans === q.correct ? (
+                  {ps.locked ? (
                     <strong style={{ color: "var(--accent-2)" }}>✓ Correct.</strong>
                   ) : (
-                    <strong style={{ color: "var(--accent)" }}>✗ Not quite.</strong>
+                    <strong style={{ color: "var(--accent)" }}>
+                      ✗ Not quite — the correct answer is highlighted.
+                    </strong>
                   )}{" "}
                   <span dangerouslySetInnerHTML={{ __html: q.explain }} />
                 </>
@@ -98,10 +164,10 @@ export default function Quiz({ questions }: Props) {
         );
       })}
 
-      {allAnswered && (
+      {allLocked && (
         <div className="quiz-score">
           <div className="big">
-            <span>{score}</span>
+            <span>{firstTryCorrect}</span>
             <span className="denom">/{questions.length}</span>
           </div>
           <p
@@ -114,6 +180,9 @@ export default function Quiz({ questions }: Props) {
             }}
           >
             {scoreMessage}
+          </p>
+          <p style={{ margin: "8px 0 0", fontSize: 13, color: "var(--muted-on-dark)" }}>
+            {firstTryCorrect} on first try · {eventuallyCorrect} after retries
           </p>
           <button
             className="btn ghost"
