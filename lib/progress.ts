@@ -52,11 +52,25 @@ function load(): ProgressStore {
       return cache;
     }
     const parsed = JSON.parse(raw);
-    if (!parsed || parsed.v !== 1 || typeof parsed.tutorials !== "object") {
+    if (!parsed || parsed.v !== 1 || typeof parsed.tutorials !== "object" || parsed.tutorials === null) {
       cache = structuredClone(EMPTY_STORE);
       return cache;
     }
-    cache = parsed as ProgressStore;
+    // Validate inner shape — drop tutorials with malformed array fields
+    const cleaned: ProgressStore = { v: 1, tutorials: {} };
+    for (const [slug, t] of Object.entries(parsed.tutorials as Record<string, unknown>)) {
+      if (
+        t &&
+        typeof t === "object" &&
+        Array.isArray((t as TutorialProgress).visitedChapters) &&
+        Array.isArray((t as TutorialProgress).completedChapters) &&
+        Array.isArray((t as TutorialProgress).quizAttempts) &&
+        typeof (t as TutorialProgress).slug === "string"
+      ) {
+        cleaned.tutorials[slug] = t as TutorialProgress;
+      }
+    }
+    cache = cleaned;
     return cache;
   } catch {
     cache = structuredClone(EMPTY_STORE);
@@ -153,24 +167,26 @@ export function clearAll(): void {
 
 // --- React hook ---
 
-const bus = isBrowser() ? new EventTarget() : ({ addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => true } as unknown as EventTarget);
+const bus = new EventTarget();
 
 export function useProgress(slug: string) {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
 
   useEffect(() => {
     const onChange = () => setTick((n) => n + 1);
-    bus.addEventListener("progress-changed", onChange);
-    if (isBrowser()) window.addEventListener("storage", (e) => {
+    const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
-        cache = undefined; // force reload
+        cache = undefined; // force reload from disk on next access
         onChange();
       }
-    });
+    };
+    bus.addEventListener("progress-changed", onChange);
+    if (isBrowser()) window.addEventListener("storage", onStorage);
     // Trigger one re-read after mount to hydrate from storage (avoids SSR mismatch).
     setTick((n) => n + 1);
     return () => {
       bus.removeEventListener("progress-changed", onChange);
+      if (isBrowser()) window.removeEventListener("storage", onStorage);
     };
   }, []);
 
@@ -182,7 +198,6 @@ export function useProgress(slug: string) {
     markCompleted: useCallback((chapterId: string) => markCompleted(slug, chapterId), [slug]),
     recordQuizAttempt: useCallback((a: QuizAttempt) => recordQuizAttempt(slug, a), [slug]),
     reset: useCallback(() => clearTutorial(slug), [slug]),
-    _tick: tick,  // referenced to keep TS happy; consumers ignore
   };
 }
 
@@ -206,7 +221,9 @@ export function __flushPendingWrites(): void {
     if (isBrowser()) {
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cache ?? EMPTY_STORE));
-      } catch {}
+      } catch (e) {
+        console.warn("[progress] failed to flush", e);
+      }
     }
   }
 }

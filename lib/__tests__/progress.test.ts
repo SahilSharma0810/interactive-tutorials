@@ -159,6 +159,36 @@ test("quota-exceeded write does not throw and the in-memory state still updates"
   assert.deepEqual(getProgress("a")?.visitedChapters, ["ch1"]);
 });
 
+test("malformed inner shape entries are dropped on load, store remains usable", () => {
+  __resetForTest();
+  // Write a parseable but malformed entry directly to storage
+  (globalThis as any).localStorage.setItem(
+    "tangible:progress:v1",
+    JSON.stringify({
+      v: 1,
+      tutorials: {
+        bad: { slug: "bad", visitedChapters: "not-an-array" },
+        good: {
+          slug: "good",
+          visitedChapters: ["ch1"],
+          completedChapters: [],
+          quizAttempts: [],
+          startedAt: 1,
+          updatedAt: 1,
+        },
+      },
+    })
+  );
+  __resetForTest({ keepStorage: true });
+  // The malformed entry is dropped; the good one survives.
+  assert.equal(getProgress("bad"), undefined);
+  assert.deepEqual(getProgress("good")?.visitedChapters, ["ch1"]);
+  // Subsequent writes still work — append a new tutorial without throwing.
+  markVisited("new", "ch1");
+  __flushPendingWrites();
+  assert.deepEqual(getProgress("new")?.visitedChapters, ["ch1"]);
+});
+
 (async () => {
   let failed = 0;
   for (const { name, fn } of tests) {
