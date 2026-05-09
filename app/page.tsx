@@ -3,6 +3,8 @@ import Nav from "@/components/Nav";
 import { tutorials } from "@/lib/tutorials/registry";
 import type { Tutorial } from "@/lib/tutorials/types";
 import DifficultyPill from "@/components/DifficultyPill";
+import HomeProgressTags from "@/components/HomeProgressTags";
+import HomeResumeCta from "@/components/HomeResumeCta";
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
@@ -113,6 +115,7 @@ export default function Home() {
                               <span className="toc-leader" aria-hidden />
                               <span className="toc-page">
                                 p.&nbsp;{String((i + 1) * 7).padStart(3, "0")}
+                                <HomeProgressTags tutorial={t} />
                               </span>
                             </span>
                             <p className="toc-desc">{t.description}</p>
@@ -139,9 +142,7 @@ export default function Home() {
                                   {topic}
                                 </span>
                               ))}
-                              <span className="toc-cta">
-                                Begin reading <span aria-hidden>→</span>
-                              </span>
+                              <HomeResumeCta tutorial={t} />
                             </span>
                           </span>
                         </Link>

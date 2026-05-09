@@ -1858,3 +1858,22 @@ section[data-chapter-id] > h2 > .heading-anchor:focus {
 }
 .toc-prereq a { color: var(--accent); text-decoration: none; }
 .toc-prereq a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Home progress tags  (Task 18)
+   ============================================================ */
+.home-completed-badge {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--accent);
+  font-size: 11px;
+  vertical-align: middle;
+}
+.home-resume-cue {
+  display: inline-block;
+  margin-left: 8px;
+  font-family: var(--body);
+  font-size: 11px;
+  letter-spacing: -0.005em;
+  color: var(--accent);
+}
