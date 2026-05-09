@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Nav from "@/components/Nav";
+import TutorialShell from "@/components/TutorialShell";
+import { meta } from "./meta";
 import EventLoopWalkthrough from "@/components/EventLoopWalkthrough";
 import RuntimeAnatomy from "@/components/RuntimeAnatomy";
 import PriorityRace from "@/components/PriorityRace";
@@ -15,18 +16,6 @@ import {
   fetchInterleaveSteps,
   starvationSteps,
 } from "./steps";
-
-const NAV_LINKS = [
-  { href: "#single-thread", label: "Single thread" },
-  { href: "#runtime", label: "Runtime" },
-  { href: "#loop-algo", label: "The loop" },
-  { href: "#priority", label: "Priority" },
-  { href: "#scenarios", label: "Scenarios" },
-  { href: "#rendering", label: "Rendering" },
-  { href: "#node", label: "Node" },
-  { href: "#playground", label: "Playground" },
-  { href: "#quiz", label: "Quiz" },
-];
 
 const SCENARIOS = [
   { key: "sync",      label: "Sync only",          steps: syncOnlySteps },
@@ -126,8 +115,7 @@ export default function EventLoopTutorial() {
   const active = SCENARIOS.find((s) => s.key === scenario)!;
 
   return (
-    <>
-      <Nav links={NAV_LINKS} />
+    <TutorialShell meta={meta}>
       <main id="main">
         {/* HERO */}
         <section className="section hero">
@@ -155,7 +143,7 @@ export default function EventLoopTutorial() {
         </section>
 
         {/* CHAPTER 1 — single thread */}
-        <section className="section" id="single-thread">
+        <section className="section" id="single-thread" data-chapter-id="single-thread">
           <div className="eyebrow">Chapter 1 · The constraint</div>
           <h2>One <em>thread,</em> one stack.</h2>
           <p className="lede">
@@ -212,7 +200,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 2 — runtime model */}
-        <section className="section" id="runtime">
+        <section className="section" id="runtime" data-chapter-id="runtime">
           <div className="eyebrow">Chapter 2 · The cast of characters</div>
           <h2>The <em>runtime</em> model.</h2>
           <p className="lede">
@@ -256,7 +244,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 3 — loop algorithm */}
-        <section className="section" id="loop-algo">
+        <section className="section" id="loop-algo" data-chapter-id="loop-algo">
           <div className="eyebrow">Chapter 3 · The algorithm</div>
           <h2>The loop, in <em>twelve lines.</em></h2>
           <p className="lede">
@@ -296,7 +284,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 4 — priority */}
-        <section className="section" id="priority">
+        <section className="section" id="priority" data-chapter-id="priority">
           <div className="eyebrow">Chapter 4 · The ordering rule</div>
           <h2>Microtasks &gt; <em>Tasks.</em></h2>
           <p className="lede">
@@ -311,7 +299,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 5 — scenarios */}
-        <section className="section" id="scenarios">
+        <section className="section" id="scenarios" data-chapter-id="scenarios">
           <div className="eyebrow">Chapter 5 · The canonical traces</div>
           <h2>Step through, <em>frame by frame.</em></h2>
           <p className="lede">
@@ -338,7 +326,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 6 — rendering */}
-        <section className="section" id="rendering">
+        <section className="section" id="rendering" data-chapter-id="rendering">
           <div className="eyebrow">Chapter 6 · Where paint fits</div>
           <h2>Rendering &amp; <em>requestAnimationFrame.</em></h2>
           <p className="lede">
@@ -383,7 +371,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 7 — Node */}
-        <section className="section" id="node">
+        <section className="section" id="node" data-chapter-id="node">
           <div className="eyebrow">Chapter 7 · The other runtime</div>
           <h2>Node.js — same idea, <em>more phases.</em></h2>
           <p className="lede">
@@ -431,7 +419,7 @@ console.log("end");`}
         </section>
 
         {/* CHAPTER 8 — playground */}
-        <section className="section" id="playground">
+        <section className="section" id="playground" data-chapter-id="playground">
           <div className="eyebrow">Chapter 8 · Free play</div>
           <h2>The Event Loop <em>Sandbox.</em></h2>
           <p className="lede">
@@ -439,12 +427,16 @@ console.log("end");`}
             subset of async APIs — supported features are listed below.
           </p>
           <div style={{ marginTop: 32 }}>
-            <EventLoopPlayground />
+            <EventLoopPlayground onFirstRun={() => {
+              if (typeof window !== "undefined") {
+                import("@/lib/progress").then(m => m.markCompleted(meta.slug, "playground"));
+              }
+            }} />
           </div>
         </section>
 
         {/* CHAPTER 9 — quiz */}
-        <section className="section" id="quiz">
+        <section className="section" id="quiz" data-chapter-id="quiz">
           <div className="eyebrow">Chapter 9 · Test yourself</div>
           <h2>Check your <em>understanding.</em></h2>
           <p className="lede">
@@ -452,7 +444,7 @@ console.log("end");`}
             answer to see the explanation.
           </p>
           <div style={{ marginTop: 36 }}>
-            <Quiz questions={QUIZ_QUESTIONS} />
+            <Quiz questions={QUIZ_QUESTIONS} tutorialSlug={meta.slug} chapterId="quiz" />
           </div>
         </section>
       </main>
@@ -464,6 +456,6 @@ console.log("end");`}
           Built for hands, eyes, and intuition.
         </p>
       </footer>
-    </>
+    </TutorialShell>
   );
 }

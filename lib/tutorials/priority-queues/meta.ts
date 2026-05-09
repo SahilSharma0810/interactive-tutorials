@@ -9,4 +9,16 @@ export const meta: TutorialMeta = {
   topics: ["Data Structures", "Algorithms"],
   category: "Data Structures & Algorithms",
   order: 1,
+  difficulty: "intermediate",
+  recommendedFirst: true,
+  chapters: [
+    { id: "priority-queue", label: "Priority Queue", title: "Priority queues" },
+    { id: "binary-heap",    label: "Heap",          title: "Binary heaps" },
+    { id: "min-max",        label: "Min/Max",       title: "Min vs max" },
+    { id: "array-repr",     label: "Array",         title: "Array representation" },
+    { id: "operations",      label: "Operations",    title: "Operations" },
+    { id: "time-complexity", label: "Complexity",    title: "Time complexity" },
+    { id: "playground",      label: "Playground",    title: "Playground" },
+    { id: "quiz",            label: "Quiz",          title: "Test yourself" },
+  ],
 };

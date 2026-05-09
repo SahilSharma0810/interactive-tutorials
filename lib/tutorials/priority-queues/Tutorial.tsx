@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Nav from "@/components/Nav";
+import TutorialShell from "@/components/TutorialShell";
+import { meta } from "./meta";
 import HeapSvg from "@/components/HeapSvg";
 import MinMaxToggle from "@/components/MinMaxToggle";
 import ArrayLinkingDemo from "@/components/ArrayLinkingDemo";
@@ -16,16 +17,6 @@ import {
   decreaseKeySteps,
   deleteSteps,
 } from "./steps";
-
-const NAV_LINKS = [
-  { href: "#priority-queue", label: "Priority Queue" },
-  { href: "#binary-heap", label: "Heap" },
-  { href: "#min-max", label: "Min/Max" },
-  { href: "#array-repr", label: "Array" },
-  { href: "#operations", label: "Operations" },
-  { href: "#playground", label: "Playground" },
-  { href: "#quiz", label: "Quiz" },
-];
 
 const OPERATIONS = [
   { key: "insert",      label: "Insert" },
@@ -119,8 +110,7 @@ export default function PriorityQueuesTutorial() {
   const [activeOp, setActiveOp] = useState<OpKey>("insert");
 
   return (
-    <>
-      <Nav links={NAV_LINKS} />
+    <TutorialShell meta={meta}>
       <main id="main">
         {/* HERO */}
         <section className="section hero">
@@ -174,7 +164,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* PRIORITY QUEUE */}
-        <section className="section" id="priority-queue">
+        <section className="section" id="priority-queue" data-chapter-id="priority-queue">
           <div className="eyebrow">Chapter 1 · The motivation</div>
           <h2>
             What is a Priority&nbsp;<em>Queue</em>?
@@ -267,7 +257,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* BINARY HEAP */}
-        <section className="section" id="binary-heap">
+        <section className="section" id="binary-heap" data-chapter-id="binary-heap">
           <div className="eyebrow">Chapter 2 · The structure</div>
           <h2>
             The Binary&nbsp;<em>Heap.</em>
@@ -325,7 +315,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* MIN VS MAX */}
-        <section className="section" id="min-max">
+        <section className="section" id="min-max" data-chapter-id="min-max">
           <div className="eyebrow">Chapter 3 · Two flavors</div>
           <h2>
             Min Heap vs Max <em>Heap.</em>
@@ -340,7 +330,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* ARRAY REPR */}
-        <section className="section" id="array-repr">
+        <section className="section" id="array-repr" data-chapter-id="array-repr">
           <div className="eyebrow">Chapter 4 · A clever trick</div>
           <h2>
             Storing a tree in an&nbsp;<em>array.</em>
@@ -396,7 +386,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* OPERATIONS */}
-        <section className="section" id="operations">
+        <section className="section" id="operations" data-chapter-id="operations">
           <div className="eyebrow">Chapter 5 · The six operations</div>
           <h2>
             Every operation, step by&nbsp;<em>step.</em>
@@ -557,8 +547,8 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* PLAYGROUND */}
-        <section className="section" id="playground">
-          <div className="eyebrow">Chapter 6 · Free play</div>
+        <section className="section" id="playground" data-chapter-id="playground">
+          <div className="eyebrow">Chapter 7 · Free play</div>
           <h2>
             The Heap <em>Sandbox.</em>
           </h2>
@@ -572,8 +562,8 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* TIME COMPLEXITY */}
-        <section className="section">
-          <div className="eyebrow">Chapter 7 · The bottom line</div>
+        <section className="section" id="time-complexity" data-chapter-id="time-complexity">
+          <div className="eyebrow">Chapter 6 · The bottom line</div>
           <h2>
             Time <em>complexity.</em>
           </h2>
@@ -645,7 +635,7 @@ export default function PriorityQueuesTutorial() {
         </section>
 
         {/* QUIZ */}
-        <section className="section" id="quiz">
+        <section className="section" id="quiz" data-chapter-id="quiz">
           <div className="eyebrow">Chapter 8 · Test yourself</div>
           <h2>
             Check your <em>understanding.</em>
@@ -656,7 +646,7 @@ export default function PriorityQueuesTutorial() {
             what stuck.
           </p>
           <div style={{ marginTop: 36 }}>
-            <Quiz questions={QUIZ_QUESTIONS} />
+            <Quiz questions={QUIZ_QUESTIONS} tutorialSlug={meta.slug} chapterId="quiz" />
           </div>
         </section>
       </main>
@@ -669,6 +659,6 @@ export default function PriorityQueuesTutorial() {
           Built for hands, eyes, and intuition.
         </p>
       </footer>
-    </>
+    </TutorialShell>
   );
 }

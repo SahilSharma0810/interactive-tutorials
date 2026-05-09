@@ -1482,3 +1482,448 @@ footer {
   outline-offset: 1px;
   border-color: var(--accent-focus);
 }
+
+/* ============================================================
+   Reading progress bar  (Task 4)
+   ============================================================ */
+.reading-progress {
+  position: fixed;
+  top: 44px;          /* below the 44px topnav */
+  left: 0; right: 0;
+  height: 2px;
+  z-index: 49;        /* one below topnav (50) */
+  background: transparent;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity .2s ease;
+}
+.reading-progress.is-hidden { opacity: 0; }
+.reading-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transform-origin: 0 0;
+  transform: scaleX(0);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress { transition: none; }
+}
+
+/* ============================================================
+   Rail TOC  (Task 5)
+   ============================================================ */
+.rail-toc {
+  position: sticky;
+  top: 64px;          /* topnav 44 + progress 2 + 18 breathing */
+  width: 240px;
+  font-family: var(--body);
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  color: var(--ink-48);
+  align-self: start;  /* prevent stretch in grid parent */
+}
+.rail-toc-label {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-48);
+  margin-bottom: 12px;
+  padding-left: 12px;
+}
+.rail-toc-list { list-style: none; padding: 0; margin: 0; }
+.rail-toc-item {
+  border-left: 3px solid transparent;
+}
+.rail-toc-item.is-active { border-left-color: var(--accent); }
+.rail-toc-item a {
+  display: grid;
+  grid-template-columns: 24px 1fr 14px;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: color .15s, background-color .15s;
+}
+.rail-toc-item a:hover { color: var(--ink); background: var(--bg-2); }
+.rail-toc-item.is-active a { color: var(--accent); font-weight: 600; }
+.rail-toc-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-48);
+}
+.rail-toc-text { line-height: 1.3; }
+.rail-toc-glyph {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-48);
+  background: transparent;
+  justify-self: end;
+}
+.rail-toc-item.is-visited .rail-toc-glyph { border-color: var(--ink-48); background: transparent; }
+.rail-toc-item.is-completed .rail-toc-glyph { background: var(--accent); border-color: var(--accent); }
+@media (max-width: 1099px) { .rail-toc { display: none; } }
+@media print { .rail-toc { display: none; } }
+@media print { .reading-progress { display: none; } }
+
+/* ============================================================
+   Mobile chapter menu  (Task 6)
+   ============================================================ */
+.mobile-chapter-trigger,
+.mobile-chapter-sheet,
+.mobile-chapter-backdrop { display: none; }
+
+@media (max-width: 833px) {
+  .mobile-chapter-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 60;
+    width: 48px; height: 48px;     /* >=44 target */
+    border-radius: 9999px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    cursor: pointer;
+  }
+  .mobile-chapter-trigger:active { transform: scale(0.96); }
+
+  .mobile-chapter-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.32);
+    z-index: 70;
+  }
+
+  .mobile-chapter-sheet {
+    display: block;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 80;
+    background: var(--paper);
+    border-radius: 18px 18px 0 0;
+    padding: 16px 16px calc(env(safe-area-inset-bottom, 0) + 16px);
+    transform: translateY(100%);
+    transition: transform .22s ease;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .mobile-chapter-sheet.is-open { transform: translateY(0); }
+  .mobile-chapter-sheet:focus { outline: none; }
+
+  .mobile-chapter-sheet-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 6px 12px;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--body); font-size: 13px; font-weight: 600;
+  }
+
+  .mobile-chapter-list {
+    list-style: none; padding: 0; margin: 8px 0 0;
+  }
+  .mobile-chapter-item a {
+    display: grid;
+    grid-template-columns: 28px 1fr 14px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 8px;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 8px;
+    font-family: var(--body); font-size: 15px;
+  }
+  .mobile-chapter-item a:hover { background: var(--bg-2); }
+  .mobile-chapter-item.is-active a { color: var(--accent); font-weight: 600; }
+  .mobile-chapter-num { font-family: var(--mono); font-size: 12px; color: var(--ink-48); }
+  .mobile-chapter-glyph {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink-48);
+    justify-self: end;
+  }
+  .mobile-chapter-item.is-completed .mobile-chapter-glyph { background: var(--accent); border-color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-chapter-sheet { transition: none; }
+  }
+}
+
+/* ============================================================
+   Top nav active anchor  (Task 7)
+   ============================================================ */
+.topnav a.is-active { opacity: 1; }
+.topnav a.is-active::after {
+  content: "";
+  display: block;
+  height: 1.5px;
+  background: var(--accent-on-dark);
+  margin-top: 2px;
+  border-radius: 1px;
+}
+
+/* ============================================================
+   Tutorial Shell  (Task 8)
+   ============================================================ */
+.tutorial-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1480px;
+  margin: 0 auto;
+  position: relative;
+}
+@media (min-width: 1100px) {
+  .tutorial-shell {
+    grid-template-columns: 240px minmax(0, 1fr);
+    column-gap: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .tutorial-shell-rail {
+    padding-top: 96px; /* align rail with hero baseline */
+  }
+}
+@media (max-width: 1099px) {
+  .tutorial-shell-rail { display: none; }
+}
+.tutorial-shell-main { min-width: 0; }
+/* The main element inside tutorial-shell-main keeps its own internal padding */
+@media (min-width: 1100px) {
+  .tutorial-shell-main main .section { max-width: 920px; }
+  .tutorial-shell-main main .section.hero { max-width: 920px; }
+}
+
+/* ============================================================
+   Top nav anchors yield to RailToc at desktop  (Task 8 fix)
+   ============================================================ */
+@media (min-width: 1100px) {
+  .topnav ul { display: none; }
+}
+
+/* ============================================================
+   Quiz running score chip + KCR reveal  (Task 11)
+   ============================================================ */
+.quiz-running-score {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  background: var(--bg-2);
+  margin-bottom: 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink);
+}
+.quiz-running-score-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.quiz-running-score-value { color: var(--ink); }
+
+.quiz-opt.kcr-reveal {
+  border-color: var(--success);
+  background: rgba(44, 122, 68, 0.06);
+  position: relative;
+}
+.quiz-opt.kcr-reveal::after {
+  content: "correct answer";
+  position: absolute;
+  right: 12px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.quiz-opt.kcr-reveal { padding-right: 120px; }
+@media (max-width: 600px) {
+  .quiz-opt.kcr-reveal { padding-right: 16px; }
+  .quiz-opt.kcr-reveal::after { content: none; }
+}
+
+/* ============================================================
+   Step scrubber  (Task 12)
+   ============================================================ */
+.step-scrubber {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+.step-dot {
+  width: 14px; height: 14px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--hairline);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, transform .12s;
+}
+.step-dot:hover { border-color: var(--accent); }
+.step-dot:active { transform: scale(0.92); }
+.step-dot.is-visited { background: var(--ink-48); border-color: var(--ink-48); }
+.step-dot.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  outline: 2px solid rgba(0, 102, 204, 0.18);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Next chapter CTA  (Task 14)
+   ============================================================ */
+.next-chapter-cta {
+  margin-top: 56px;
+  text-align: right;
+  border-top: 1px solid var(--hairline);
+  padding-top: 24px;
+}
+.next-chapter-cta a {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.005em;
+}
+.next-chapter-cta a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Heading anchor links  (Task 15)
+   ============================================================ */
+section[data-chapter-id] > h2 { position: relative; }
+section[data-chapter-id] > h2 > .heading-anchor {
+  margin-left: 12px;
+  font-family: var(--mono);
+  font-size: 0.6em;
+  font-weight: 400;
+  color: var(--ink-48);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .15s;
+  vertical-align: middle;
+}
+section[data-chapter-id] > h2:hover > .heading-anchor,
+section[data-chapter-id] > h2 > .heading-anchor:focus {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* ============================================================
+   Home: Start here + prerequisite line  (Task 17)
+   ============================================================ */
+.section.start-here { padding-top: 0; padding-bottom: 0; margin-bottom: 28px; }
+.start-here-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  text-decoration: none;
+  color: inherit;
+}
+.start-here-card h3 {
+  font-family: var(--display);
+  font-size: 26px;
+  margin: 6px 0 6px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+.start-here-card p { margin: 0; color: var(--ink-80); font-size: 16px; }
+.start-here-cta {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.toc-prereq {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink-48);
+  margin: -8px 0 14px;
+}
+.toc-prereq a { color: var(--accent); text-decoration: none; }
+.toc-prereq a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Home progress tags  (Task 18)
+   ============================================================ */
+.home-completed-badge {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--accent);
+  font-size: 11px;
+  vertical-align: middle;
+}
+.home-resume-cue {
+  display: inline-block;
+  margin-left: 8px;
+  font-family: var(--body);
+  font-size: 11px;
+  letter-spacing: -0.005em;
+  color: var(--accent);
+}
+
+/* ============================================================
+   Home topic filter  (Task 19)
+   ============================================================ */
+.topic-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 28px;
+}
+.topic-filter-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  background: var(--bg);
+  font-family: var(--body);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+  color: var(--ink-80);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, color .15s;
+}
+.topic-filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+.topic-filter-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   Reset progress link  (Task 20)
+   ============================================================ */
+.reset-progress-link {
+  background: transparent;
+  border: none;
+  font-family: var(--body);
+  font-size: 11px;
+  color: var(--ink-48);
+  cursor: pointer;
+  text-decoration: underline;
+  letter-spacing: -0.005em;
+}
+.reset-progress-link:hover { color: var(--accent); }
+
+/* ============================================================
+   Hash-jump offset for fixed top-nav  (final-review fix)
+   ============================================================ */
+section[data-chapter-id] {
+  scroll-margin-top: 64px;
+}
