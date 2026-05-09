@@ -1927,3 +1927,22 @@ section[data-chapter-id] > h2 > .heading-anchor:focus {
 section[data-chapter-id] {
   scroll-margin-top: 64px;
 }
+
+/* ============================================================
+   Topnav brand: stacked-layers logo + wordmark
+   ============================================================ */
+.topnav-brand {
+  gap: 10px;            /* slightly more breathing than the old .dot+text gap */
+}
+.topnav-logo {
+  display: block;
+  flex-shrink: 0;
+  color: var(--accent-on-dark);
+}
+.topnav-wordmark {
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: #ffffff;
+}
