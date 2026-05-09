@@ -1655,3 +1655,16 @@ footer {
     .mobile-chapter-sheet { transition: none; }
   }
 }
+
+/* ============================================================
+   Top nav active anchor  (Task 7)
+   ============================================================ */
+.topnav a.is-active { opacity: 1; }
+.topnav a.is-active::after {
+  content: "";
+  display: block;
+  height: 1.5px;
+  background: var(--accent-on-dark);
+  margin-top: 2px;
+  border-radius: 1px;
+}
