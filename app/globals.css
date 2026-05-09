@@ -1753,3 +1753,32 @@ footer {
   .quiz-opt.kcr-reveal { padding-right: 16px; }
   .quiz-opt.kcr-reveal::after { content: none; }
 }
+
+/* ============================================================
+   Step scrubber  (Task 12)
+   ============================================================ */
+.step-scrubber {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+.step-dot {
+  width: 14px; height: 14px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--hairline);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, transform .12s;
+}
+.step-dot:hover { border-color: var(--accent); }
+.step-dot:active { transform: scale(0.92); }
+.step-dot.is-visited { background: var(--ink-48); border-color: var(--ink-48); }
+.step-dot.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  outline: 2px solid rgba(0, 102, 204, 0.18);
+  outline-offset: 2px;
+}

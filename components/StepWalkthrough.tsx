@@ -61,10 +61,8 @@ export default function StepWalkthrough({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!rootRef.current) return;
-      // Only respond if the widget is in viewport and the active element is inside it
       const rect = rootRef.current.getBoundingClientRect();
-      const inView =
-        rect.top < window.innerHeight && rect.bottom > 0;
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
       if (!inView) return;
       const active = document.activeElement;
       const insideThis = active && rootRef.current.contains(active);
@@ -75,6 +73,18 @@ export default function StepWalkthrough({
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
         setIdx((i) => Math.max(i - 1, 0));
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setIdx(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setIdx(steps.length - 1);
+      } else if (/^[1-9]$/.test(e.key)) {
+        const target = parseInt(e.key, 10) - 1;
+        if (target < steps.length) {
+          e.preventDefault();
+          setIdx(target);
+        }
       }
     };
     window.addEventListener("keydown", onKey);
@@ -130,6 +140,27 @@ export default function StepWalkthrough({
         <span className="label">Narration</span>
         <span className="sr-only">Step {idx + 1} of {steps.length}. </span>
         <span dangerouslySetInnerHTML={{ __html: step.narration }} />
+      </div>
+
+      <div className="step-scrubber" role="tablist" aria-label="Steps">
+        {steps.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-label={`Step ${i + 1} of ${steps.length}`}
+            aria-current={i === idx ? "step" : undefined}
+            className={
+              "step-dot" +
+              (i === idx ? " is-active" : "") +
+              (i < idx ? " is-visited" : "")
+            }
+            onClick={() => {
+              setPlaying(false);
+              setIdx(i);
+            }}
+          />
+        ))}
       </div>
 
       <div className="controls">
