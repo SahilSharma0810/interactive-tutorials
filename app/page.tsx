@@ -2,6 +2,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import { tutorials } from "@/lib/tutorials/registry";
 import HomeTopicFilter from "@/components/HomeTopicFilter";
+import ResetProgressLink from "@/components/ResetProgressLink";
 
 export default function Home() {
   return (
@@ -92,6 +93,9 @@ export default function Home() {
         <p className="footer-imprint">
           Set in Fraunces &amp; Newsreader · Printed in the browser, MMXXVI
         </p>
+        <div style={{ marginTop: 14 }}>
+          <ResetProgressLink />
+        </div>
       </footer>
     </>
   );
