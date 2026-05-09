@@ -1668,3 +1668,34 @@ footer {
   margin-top: 2px;
   border-radius: 1px;
 }
+
+/* ============================================================
+   Tutorial Shell  (Task 8)
+   ============================================================ */
+.tutorial-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1480px;
+  margin: 0 auto;
+  position: relative;
+}
+@media (min-width: 1100px) {
+  .tutorial-shell {
+    grid-template-columns: 240px minmax(0, 1fr);
+    column-gap: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .tutorial-shell-rail {
+    padding-top: 96px; /* align rail with hero baseline */
+  }
+}
+@media (max-width: 1099px) {
+  .tutorial-shell-rail { display: none; }
+}
+.tutorial-shell-main { min-width: 0; }
+/* The main element inside tutorial-shell-main keeps its own internal padding */
+@media (min-width: 1100px) {
+  .tutorial-shell-main main .section { max-width: 920px; }
+  .tutorial-shell-main main .section.hero { max-width: 920px; }
+}
