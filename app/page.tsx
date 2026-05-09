@@ -1,26 +1,9 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import { tutorials } from "@/lib/tutorials/registry";
-import type { Tutorial } from "@/lib/tutorials/types";
-import DifficultyPill from "@/components/DifficultyPill";
-import HomeProgressTags from "@/components/HomeProgressTags";
-import HomeResumeCta from "@/components/HomeResumeCta";
-
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-
-function groupByCategory(items: Tutorial[]): { category: string; items: Tutorial[] }[] {
-  const groups = new Map<string, Tutorial[]>();
-  for (const t of items) {
-    const list = groups.get(t.category) ?? [];
-    list.push(t);
-    groups.set(t.category, list);
-  }
-  return Array.from(groups, ([category, items]) => ({ category, items }));
-}
+import HomeTopicFilter from "@/components/HomeTopicFilter";
 
 export default function Home() {
-  const grouped = groupByCategory(tutorials);
-  let pageIndex = 0;
   return (
     <>
       <Nav />
@@ -97,61 +80,7 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            grouped.map(({ category, items }) => (
-              <div key={category} className="toc-category">
-                <h3 className="toc-category-heading">{category}</h3>
-                <ol className="toc-list" role="list">
-                  {items.map((t) => {
-                    const i = pageIndex++;
-                    return (
-                      <li key={t.slug} className="toc-item" style={{ ['--i' as never]: i }}>
-                        <Link href={`/tutorials/${t.slug}`} className="toc-link">
-                          <span className="toc-numeral" aria-hidden>
-                            {ROMAN[i] ?? String(i + 1)}.
-                          </span>
-                          <span className="toc-body">
-                            <span className="toc-title-row">
-                              <h3 className="toc-title">{t.title}</h3>
-                              <span className="toc-leader" aria-hidden />
-                              <span className="toc-page">
-                                p.&nbsp;{String((i + 1) * 7).padStart(3, "0")}
-                                <HomeProgressTags tutorial={t} />
-                              </span>
-                            </span>
-                            <p className="toc-desc">{t.description}</p>
-                            {t.prerequisites && t.prerequisites.length > 0 && (
-                              <p className="toc-prereq">
-                                Reads after:{" "}
-                                {t.prerequisites.map((slug, i) => {
-                                  const prev = tutorials.find((x) => x.slug === slug);
-                                  if (!prev) return null;
-                                  return (
-                                    <span key={slug}>
-                                      {i > 0 && ", "}
-                                      <Link href={`/tutorials/${prev.slug}`}>{prev.title}</Link>
-                                    </span>
-                                  );
-                                })}
-                              </p>
-                            )}
-                            <span className="toc-meta">
-                              <span className="toc-meta-pill duration">{t.duration}</span>
-                              <DifficultyPill level={t.difficulty} />
-                              {t.topics.map((topic) => (
-                                <span key={topic} className="toc-meta-pill">
-                                  {topic}
-                                </span>
-                              ))}
-                              <HomeResumeCta tutorial={t} />
-                            </span>
-                          </span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </div>
-            ))
+            <HomeTopicFilter tutorials={tutorials} />
           )}
         </section>
 

@@ -1877,3 +1877,31 @@ section[data-chapter-id] > h2 > .heading-anchor:focus {
   letter-spacing: -0.005em;
   color: var(--accent);
 }
+
+/* ============================================================
+   Home topic filter  (Task 19)
+   ============================================================ */
+.topic-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 28px;
+}
+.topic-filter-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  background: var(--bg);
+  font-family: var(--body);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+  color: var(--ink-80);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, color .15s;
+}
+.topic-filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+.topic-filter-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
