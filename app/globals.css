@@ -1950,6 +1950,9 @@ section[data-chapter-id] {
 /* ============================================================
    Tighten the cover top so it sits closer to the sticky nav
    (the original 96px felt too airy under a dark topnav).
+   Also give "Start here" some breathing room — the asterism
+   divider was sitting flush against the eyebrow.
    ============================================================ */
 .section.cover { padding-top: 40px; }
 .cover-rule { margin-bottom: 32px; }
+.section.start-here { padding-top: 40px; }
