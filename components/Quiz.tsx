@@ -47,33 +47,36 @@ export default function Quiz({ questions, tutorialSlug, chapterId }: Props) {
   }, [tutorialSlug, progress, questions.length]);
 
   const select = (qIdx: number, oIdx: number) => {
+    let didAdvance = false;
+    let attemptNum = 0;
+    let correctNow = false;
     setState((prev) => {
       const ps = prev[qIdx];
       if (ps.locked) return prev;
       // Skip duplicate clicks on an option already tried for this question
       if (ps.attempts.some((a) => a.selectedIdx === oIdx)) return prev;
-      const correct = oIdx === questions[qIdx].correct;
+      correctNow = oIdx === questions[qIdx].correct;
+      attemptNum = ps.attempts.length + 1;
+      didAdvance = true;
       const nextPs: PerQuestionState = {
-        attempts: [...ps.attempts, { selectedIdx: oIdx, correct }],
-        locked: correct ? true : ps.locked,
+        attempts: [...ps.attempts, { selectedIdx: oIdx, correct: correctNow }],
+        locked: correctNow ? true : ps.locked,
       };
       const next = [...prev];
       next[qIdx] = nextPs;
       return next;
     });
 
-    if (tutorialSlug) {
-      const attemptNum = (state[qIdx]?.attempts.length ?? 0) + 1;
-      const correct = oIdx === questions[qIdx].correct;
+    if (didAdvance && tutorialSlug) {
       const att: QuizAttempt = {
         questionIdx: qIdx,
         selectedIdx: oIdx,
-        correct,
+        correct: correctNow,
         attempt: attemptNum,
         ts: Date.now(),
       };
       recordQuizAttempt(att);
-      if (correct && chapterId) markCompleted(chapterId);
+      if (correctNow && chapterId) markCompleted(chapterId);
     }
   };
 
@@ -122,9 +125,8 @@ export default function Quiz({ questions, tutorialSlug, chapterId }: Props) {
                   if (oi === q.correct) cls += " correct";
                   else cls += " wrong";
                 }
-                if (showCorrect && oi === q.correct && !triedIdxs.has(oi)) {
-                  cls += " kcr-reveal";
-                }
+                const isKcrReveal = showCorrect && oi === q.correct && !triedIdxs.has(oi);
+                if (isKcrReveal) cls += " kcr-reveal";
                 if (ps.locked) cls += " disabled";
                 return (
                   <button
@@ -135,6 +137,7 @@ export default function Quiz({ questions, tutorialSlug, chapterId }: Props) {
                   >
                     <span className="marker">{LETTERS[oi]}</span>
                     <span dangerouslySetInnerHTML={{ __html: opt }} />
+                    {isKcrReveal && <span className="sr-only"> (correct answer)</span>}
                   </button>
                 );
               })}

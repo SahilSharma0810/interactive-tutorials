@@ -1748,3 +1748,8 @@ footer {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+.quiz-opt.kcr-reveal { padding-right: 120px; }
+@media (max-width: 600px) {
+  .quiz-opt.kcr-reveal { padding-right: 16px; }
+  .quiz-opt.kcr-reveal::after { content: none; }
+}
