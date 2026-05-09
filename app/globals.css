@@ -1801,3 +1801,24 @@ footer {
   letter-spacing: -0.005em;
 }
 .next-chapter-cta a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Heading anchor links  (Task 15)
+   ============================================================ */
+section[data-chapter-id] > h2 { position: relative; }
+section[data-chapter-id] > h2 > .heading-anchor {
+  margin-left: 12px;
+  font-family: var(--mono);
+  font-size: 0.6em;
+  font-weight: 400;
+  color: var(--ink-48);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .15s;
+  vertical-align: middle;
+}
+section[data-chapter-id] > h2:hover > .heading-anchor,
+section[data-chapter-id] > h2 > .heading-anchor:focus {
+  opacity: 1;
+  color: var(--accent);
+}

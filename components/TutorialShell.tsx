@@ -106,6 +106,30 @@ export default function TutorialShell({ meta, children }: Props) {
     };
   }, [meta.chapters]);
 
+  // Inject .heading-anchor <a> beside each section's <h2>
+  useEffect(() => {
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section[data-chapter-id]")
+    );
+    sections.forEach((section) => {
+      const id = section.getAttribute("data-chapter-id")!;
+      const h2 = section.querySelector(":scope > h2");
+      if (!h2 || h2.querySelector(".heading-anchor")) return;
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.className = "heading-anchor";
+      a.setAttribute("aria-label", "Copy link to section");
+      a.textContent = "#";
+      h2.appendChild(a);
+    });
+    return () => {
+      sections.forEach((section) => {
+        const a = section.querySelector(":scope > h2 > .heading-anchor");
+        if (a) a.remove();
+      });
+    };
+  }, [meta.chapters]);
+
   // Heading anchor link click → copy URL with hash
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
