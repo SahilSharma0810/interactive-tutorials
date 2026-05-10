@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Interactive Tutorials",
+  title: "Tangible — Computer science you can touch",
   description: "Hands-on, visualization-driven lessons in computer science.",
 };
 

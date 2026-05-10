@@ -15,8 +15,20 @@ export default function Nav({ links = [], activeAnchor = null }: Props) {
   return (
     <nav className="topnav">
       <div className="topnav-inner">
-        <Link className="topnav-brand" href="/">
-          <span className="dot" /> Interactive Tutorials
+        <Link className="topnav-brand" href="/" aria-label="Tangible — home">
+          <svg
+            className="topnav-logo"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect x="2" y="5"    width="20" height="3" rx="0.6" fill="currentColor" />
+            <rect x="2" y="10.5" width="16" height="3" rx="0.6" fill="currentColor" opacity="0.78" />
+            <rect x="2" y="16"   width="12" height="3" rx="0.6" fill="currentColor" opacity="0.56" />
+          </svg>
+          <span className="topnav-wordmark">Tangible</span>
         </Link>
         {links.length > 0 && (
           <ul>

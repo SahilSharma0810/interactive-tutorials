@@ -11,13 +11,6 @@ export default function Home() {
       <main id="main">
         {/* ============ HERO / COVER ============ */}
         <section className="section hero cover">
-          <div className="cover-meta">
-            <span className="cover-meta-l">Vol.&nbsp;I · № 01</span>
-            <span className="cover-meta-r">MMXXVI</span>
-          </div>
-
-          <div className="cover-rule" aria-hidden />
-
           <div className="cover-eyebrow">
             Periodicals on Computation
           </div>
